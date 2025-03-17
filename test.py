@@ -54,7 +54,7 @@ def run(modelPath, testDB):
                     walk.inferenceLabel = label.item()
 
     # Once we have the labels for each walk, we can create the testSubmission folder with:
-    test_dataset.generateTestSubmission(path = 'testSubmission')
+    test_dataset.generateTestSubmission(path = 'baselineSubmission')
 
     return
 
