@@ -1,25 +1,24 @@
 import os
+import shutil
 import random
 from natsort import natsorted
 import pandas as pd
-import glob
 import statistics
 
-import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-
-
 class Walk():
 
-    def __init__(self, data, startRow, endRow, label):
+    def __init__(self, data, startRow, endRow, label, filePath):
 
         self.data = data
         self.startRow = startRow
         self.endRow = endRow
         self.label = label
         self.originalLabel = label
+        self.inferenceLabel = 'x'
+        self.filePath = filePath
         return
     
     def sample(self, winLength):
@@ -49,6 +48,7 @@ class Condition():
         self.rb2Data = None
         self.labels1 = None
         self.labels2 = None
+        self.paths = None
 
         # each condition has 12 walks objects
         self.walks = []
@@ -72,16 +72,19 @@ class Condition():
             # we skip a walk if its len is less than winLength
             if e-s <= self.winLength: continue
 
-            self.walks.append(Walk(data=self.rb1Data, startRow=s, endRow=e, label=l))
+            self.walks.append(Walk(data=self.rb1Data, startRow=s, endRow=e, label=l, 
+                filePath = self.paths['labels1Path']))
 
         for i,(s,e,l) in enumerate(int2):
             if i == 0: continue
             if e-s <= self.winLength: continue
-            self.walks.append(Walk(data=self.rb2Data, startRow=s, endRow=e, label=l))
+            self.walks.append(Walk(data=self.rb2Data, startRow=s, endRow=e, label=l,
+                filePath = self.paths['labels2Path']))
         
         return
     
     def _findIntervals(self, tensor):
+
         intervals = []
         start = 0
         label = 0
@@ -96,10 +99,15 @@ class Condition():
 
         return intervals
 
-    def _readCSV(self, path):
+    def _readCSV(self, path, labels=False):
 
         df = pd.read_csv(path, header=None, low_memory=False)
         df = df.iloc[1:, 1:]
+
+        # this will only affect the test label files
+        if labels:
+            df.replace({'x': 10}, inplace=True)
+            df.fillna(0, inplace=True)
 
         data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
         return data
@@ -108,38 +116,10 @@ class Condition():
 
         paths = self._createCSVPaths()
 
-        # exceptions:
-
         self.rokoko1Data = self._readCSV(paths['rokoko1Path'])
         self.rokoko2Data = self._readCSV(paths['rokoko2Path'])
-        #self.bitalino1Data = self._readCSV(paths['bitalino1Path'])
-        #self.bitalino2Data = self._readCSV(paths['bitalino2Path'])
-        self.labels1 = self._readCSV(paths['labels1Path'])
-        self.labels2 = self._readCSV(paths['labels2Path'])
-
-        # usually, there are few miliseconds more samples in bitalino than rokoko, 
-        # we just trimm those
-        # n11 = self.rokoko1Data.shape[0]
-        # n12 = self.bitalino1Data.shape[0]
-        # n21 = self.rokoko2Data.shape[0]
-        # n22 = self.bitalino2Data.shape[0]
-
-        # if n11 > n12:
-        #     self.rokoko1Data = self.rokoko1Data[0:n12]
-        #     self.labels1 = self.labels1[0:n12]
-
-        # if n11 < n12:
-        #     self.bitalino1Data = self.bitalino1Data[0:n11]
-
-        # if n21 > n22:
-        #     self.rokoko2Data = self.rokoko2Data[0:n22]
-        #     self.labels2 = self.labels2[0:n22]
-
-        # if n21 < n22:
-        #     self.bitalino2Data = self.bitalino2Data[0:n21]
-        
-        #rb1Data = torch.cat((self.rokoko1Data, self.bitalino1Data), dim=1)
-        #rb2Data = torch.cat((self.rokoko2Data, self.bitalino2Data), dim=1)
+        self.labels1 = self._readCSV(paths['labels1Path'], labels=True)
+        self.labels2 = self._readCSV(paths['labels2Path'], labels=True)
 
         rb1Data = self.rokoko1Data
         rb2Data = self.rokoko2Data
@@ -148,11 +128,12 @@ class Condition():
         self.rb2Data = rb2Data[:, self.featuresIdx]
 
         if torch.any(torch.isnan(self.rb1Data)) or torch.any(torch.isnan(self.rb2Data)):
+            print("NaNs found when reading the data")
             print(self.id, self.condition)
-            a = 3
 
         assert(self.rb1Data.shape[0] == self.labels1.shape[0])
         assert(self.rb2Data.shape[0] == self.labels2.shape[0])
+        self.paths = paths
         return
     
     def _createCSVPaths(self):
@@ -214,7 +195,25 @@ class Subject():
 
     def _relabelConditions(self):
 
-        # we need to relabel the walks. Find the median of the control labels
+        # the original labels come in a likert scale from 1 to 7 (light to heavy)
+        # for the classification competition we are interested in whether the user
+        # feels lighter or heavier than with the control. Thus: we are going to 
+        # re-lable those 1-7 likert scale indexes, to -1 (the user feels lighter
+        # than with the control audio condition) 0 (is a control condition) and (1)
+        # the subject claims to feel heavier than with the control condition).
+        #
+        # Since for the control walks, the subject can give different 1-7 labels, 
+        # we get the median of the control labels to use it as a reference. Then,
+        # we label each walk as -1 if the user claims a 1-7 index smaller than the 
+        # control median, and +1 if the user claims a 1-7 index larger than the control 
+        # median. 
+        # 
+        # Our models need to learn to predict given a sample of a condition (LF, HF or control)
+        # and a sample of the control condition (X, Xc), if the user feels lighter, heavier or the same
+        # as with the control condition. 
+
+
+        # find the median of the controls
         controlLabels = [walk.label for walk in self.controlCondition.walks]
         median = statistics.median(controlLabels)
 
@@ -222,9 +221,7 @@ class Subject():
         for walk in self.controlCondition.walks: 
             walk.label = 0
 
-        # high and low are given -1, 0 or 1. If the user claims to feel heavier than with 
-        # the control, we give that walk a label of 1. If the user claims to feel lighter than
-        # with the control condition, we give this walk a label of -1
+        # relabel high freq 
         for walk in self.highCondition.walks: 
             
             if walk.label >  median: 
@@ -234,6 +231,7 @@ class Subject():
             elif walk.label <  median: 
                 walk.label = -1
         
+        # and low freq conditions
         for walk in self.lowCondition.walks: 
             
             if walk.label >  median: 
@@ -289,17 +287,17 @@ class SubjectDataset(Dataset):
     
     def __getitem__(self, idx):
 
-
-        # pick a window randomly from the dataset
+        # pick a subject, condition (Low freq, high freq or control) and walk randomly
         p = random.randint(0,len(self.subjectObj)-1)
         c = random.randint(0,2)
         w = random.randint(0, len(self.subjectObj[p].conditions[c].walks)-1)
         walk = self.subjectObj[p].conditions[c].walks[w]
 
+        # sample winLength samples randomly from the walk
         X = walk.sample(self.winLength)
         y = walk.label
 
-        # pick a control randomly for that same subject
+        # let's do the same with the control condition now
         w = random.randint(0, len(self.subjectObj[p].conditions[0].walks)-1)
         walk = self.subjectObj[p].conditions[0].walks[w]
         Xc = walk.sample(self.winLength)
@@ -321,8 +319,8 @@ class SubjectDataset(Dataset):
         # each subject with 3 conditions (control, high, low), 
         # each condition has 12 walks
         # we are going to subsample chunks of data from each walk
-        # each chunk is self.winSpecs[0]. There are an average of
-        # 5 independent windows per walk (but there is overlapping, so *10)
+        # each chunk is of len self.winSpecs[0]. There are an average of
+        # 5 independent windows per walk when using 300 samples per window
         numSamples = len(self.subjectIds)*3*12*5
 
         if self.mode == 'train':
@@ -334,7 +332,7 @@ class SubjectDataset(Dataset):
     def loadSubjects(self):
 
         for i,id_ in enumerate(self.subjectIds):
-            print("\rLoading subject (%d/%d) of %s" %(i+1, len(self.subjectIds), self.mode), end="")
+            print("\rLoading subject (%d/%d)" %(i+1, len(self.subjectIds)), end="")
             self.subjectObj.append(
                 Subject(id_, self.folderPath, self.featuresIdx, self.winLength)
             )
@@ -351,31 +349,92 @@ class SubjectDataset(Dataset):
         random.shuffle(subjectIds)
 
         trainSize = int( len(subjectIds)*self.splitPcts['train']/100 )
-        valSize = int(len(subjectIds)*self.splitPcts['val']/100)
 
         if self.mode == 'train':
             ids = subjectIds[:trainSize]
         elif self.mode == 'val':
-            ids = subjectIds[trainSize:trainSize+valSize]
+            ids = subjectIds[trainSize:]
         else:
-            ids = subjectIds[trainSize+valSize:]
+            print("Mode should be train or val")
 
         return ids
+    
+
+    def _copyLabelFiles(self, source, destination):
+
+        for root, dirs, files in os.walk(source):
+
+            # Compute the destination path
+            dest_path = os.path.join(destination, os.path.relpath(root, source))
+            
+            # Create directories in destination
+            os.makedirs(dest_path, exist_ok=True)
+            
+            # Copy files except those containing "data"
+            for file in files:
+                if "data" not in file:
+                    shutil.copy2(os.path.join(root, file), os.path.join(dest_path, file))
+        return
+    
+    def generateTestSubmission(self, path='testSubmission'):
+
+        # 1 - Copy all labels.csv files to path destination
+        self._copyLabelFiles(self.folderPath, path)
+
+        # 2 - Iterate over each subject, condition and walk and set the labels in the .csv files
+        for subjectObj in self.subjectObj:  
+            for condition in subjectObj.conditions:
+                
+                # there are two csv files we have to edit for each condition
+                csv1Path = condition.paths['labels1Path']
+                csv2Path = condition.paths['labels2Path']
+
+                csv1Path = csv1Path[csv1Path.find("test"):].replace("test", path, 1)
+                csv2Path = csv2Path[csv2Path.find("test"):].replace("test", path, 1)
+
+                df1 = pd.read_csv(csv1Path)
+                df2 = pd.read_csv(csv2Path)
+
+                for walk in condition.walks:
+
+                    df = df1 if walk.filePath == condition.paths['labels1Path'] else df2
+
+                    # write the inference label for this walk in the pandas dataframe
+                    df.iloc[walk.endRow, 1] = walk.inferenceLabel
+
+                # save the modified CSV's
+                df1.to_csv(csv1Path, index=False)
+                df2.to_csv(csv2Path,  index=False)
+        return
   
 if __name__ == '__main__':
 
-    # "Dataset "
-    folderPath = '../dataset/Unified DB' 
-    excludeIds = ['p021', 'p028', 'p051', 'p288']
+    # # "Dataset "
+    # folderPath = '../dataset/MLSP_bit_dataset/train' 
+    # excludeIds = ['p021', 'p028', 'p051', 'p288']
 
-    winLength = 300
-    featuresIdx = list(range(0,306))
-    splitPcts= {'train': 60, 'val': 20, 'test': 20}
+    # winLength = 300
+    # featuresIdx = list(range(0,306))
+    # splitPcts= {'train': 60, 'val': 40}
+    # seed=42
+
+    # datasetTr = SubjectDataset(folderPath, excludeIds, mode='train', 
+    #              winLength = 300, featuresIdx = list(range(0,306)),
+    #              splitPcts= splitPcts, seed=seed)
+    
+    # datasetVal = SubjectDataset(folderPath, excludeIds, mode='val', 
+    #              winLength = 300, featuresIdx = list(range(0,306)),
+    #              splitPcts= splitPcts, seed=seed)
+
     seed=42
-
-    datasetTr = SubjectDataset(folderPath, excludeIds, mode='test', 
-                 winLength = 300, featuresIdx = list(range(0,306)),
-                 splitPcts= splitPcts, seed=42)
-                 
+    winLength = 300
+    featidx = list(range(0,306))
+    splitPcts= {'train': 5, 'val': 0}
+    testDB = '../dataset/MLSP_bit_dataset/test'
+    test_dataset = SubjectDataset(testDB, [], mode='train', 
+                 winLength = 300, featuresIdx = featidx,
+                 splitPcts= splitPcts, seed=seed)
+    
+    test_dataset.generateTestSubmission('testSubmission')
 
     

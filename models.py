@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 class Simple1DCNN(nn.Module):
     def __init__(self, num_sensors=312, num_classes=3, dropout_prob=0):
@@ -40,7 +39,7 @@ class Simple1DCNN(nn.Module):
 
     def forward(self, x, xc):
 
-        # the control chunk its not used by this simple model
+        # the control chunk (xc) its not used by this simple model
         # (you can try to implement some models that take advantage of it)
 
         # Input shape: [batch, 1, time, sensors]

@@ -76,7 +76,6 @@ def train(args):
             outputs = model(X, Xc)
             loss = criterion(outputs, y + 1)  # Shift labels by +1 for CrossEntropyLoss
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
             optimizer.step()
 
             train_loss += loss.item()
@@ -134,7 +133,7 @@ def train(args):
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
             }
-            torch.save(checkpoint, f'../checkpoints/checkpoint_epoch_{epoch+1}.pth')
+            torch.save(checkpoint, f'checkpoint_epoch_{epoch+1}.pth')
 
     
     # Plotting
@@ -156,7 +155,7 @@ def train(args):
     plt.title('Training and validation accuracy')
 
     plt.tight_layout()
-    plt.savefig('../results/training_plot.png')
+    plt.savefig('training_plot.png')
     plt.show()
 
 if __name__ == "__main__":
