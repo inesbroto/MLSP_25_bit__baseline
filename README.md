@@ -1,14 +1,14 @@
- # BIT Data Competition 2025 - Baseline Implementation
+ # BodyInTransit Data Competition at MLSP@2025 - Baseline Implementation
  
- **Repository for the MLSP Congress 2025 Classification Challenge**  
+ **Repository for the BiT Data Challenge**  
  **Competition Website**: [https:bodyintransit.eu/bit-data-competition/](https:bodyintransit.eu/bit-data-competition/)
  
  ---
  
  ## Overview
  This repository provides a PyTorch baseline implementation for participants of the MLSP 2025 "Body in Transit" (BIT) Data Competition. The code includes:
- - Data loading and preprocessing scripts
- - A simple model architecture template
+ - Data loading
+ - A simple model architecture for the baseline competition result
  - Training (`train.py`) and inference (`test.py`) pipelines
  - Submission formatting utilities for the competition
  
@@ -19,9 +19,7 @@
  ## Getting Started
  
  ### Prerequisites
- - Python 3.8+
- - PyTorch 2.0+
- - Additional dependencies: `numpy`, `pandas`, `tqdm`
+ - Python 3.9.18
  
  ### Installation
  1. Clone the repository:
@@ -37,11 +35,11 @@
  ### Run Baseline
  1. Train the model:
     ```bash
-    python train.py --data_path /path/to/dataset
+    python train.py --db_folder ../dataset/MLSP_bit_dataset/train
     ```
  2. Generate submissions:
     ```bash
-    python test.py --data_path /path/to/test_data --model_checkpoint ./model.pth
+    python test.py --test_path ../dataset/MLSP_bit_dataset/test --model ./checkpoint_epoch_10.pth
     ```
  
  ---
@@ -49,11 +47,11 @@
  ## Dataset
  - **Original Labels**: Likert scale scores (1-7) as described in the [BIT Data Acquisition Paper](https:dl.acm.org/doi/10.1145/3613904.3642651)
  - **Competition Labels**: Transformed to {-1, 0, +1} where:
-   - **-1**: Perceived lighter than control
-   - **0**: No perceived difference
-   - **+1**: Perceived heavier than control
+   - **-1**: Perceived lighter than with control audio
+   - **0**: No perceived difference with respect to control audio
+   - **+1**: Perceived heavier than control audio
  
- The included `BITDataset` class handles this transformation automatically (see code comments for implementation details).
+ The included `SubjectDataset` class handles this transformation automatically (see code comments for implementation details).
  
  ---
  
@@ -61,7 +59,7 @@
  ### 1. Classification Challenge
  - Predict user perception relative to control conditions
  - Uses transformed ternary labels {-1, 0, +1}
- - Submissions evaluated on classification accuracy
+ - Submissions evaluated on macro F1-Score (check submissionScore.py and test.py for details)
  
  ### 2. Beyond Classification Contribution
  - Open-ended track for novel methodological contributions
@@ -72,45 +70,15 @@
  
  ---
  
- ## Submission
- 1. Format predictions using `prepare_submission.py`
+ ## Submission for the classification competition
+ 1. Example code for format predictions in `test.py` and `SubjectDataset.generateTestSubmission()`
  2. Follow guidelines on the [competition website](https:bodyintransit.eu/bit-data-competition/)
- 3. Submit both competition entry and paper draft by the deadline
  
- ---
- 
- ## Repository Structure
- ```
- .
- ├── data/               # Example data structure (placeholder)
- ├── src/
- │   ├── dataset.py      # BITDataset class with label transformation
- │   ├── model.py        # Baseline model architecture
- │   ├── train.py        # Training script
- │   ├── test.py         # Inference script
- │   └── utils/          # Submission formatting helpers
- ├── requirements.txt
- └── README.md
- ```
- 
- ---
- 
- ## Citation
- If you use this dataset or code, please cite:  
- ```bibtex
- @inproceedings{bit2024,
-   title={Body in Transit: Multimodal Perception Dataset},
-   author={Competition Organizers},
-   booktitle={Proceedings of ACM Multimedia},
-   year={2024},
-   doi={10.1145/3613904.3642651}
- }
- ```
  
  ---
  
  ## Contact
- For competition inquiries: [competition-contact-email@bodyintransit.eu](mailto:competition-contact-email@bodyintransit.eu)
+ For competition inquiries: [tmcortes@ing.uc3m.es](mailto:tmcortes@ing.uc3m.es)
  
  ---
  
