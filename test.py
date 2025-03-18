@@ -1,6 +1,6 @@
 import torch
 import random
-
+import argparse
 from models import Simple1DCNN
 from dataset import SubjectDataset
 
@@ -60,6 +60,13 @@ def run(modelPath, testDB):
 
 if __name__ == '__main__':
 
-    model = 'checkpoint_epoch_10.pth'
-    testDB = '../dataset/MLSP_bit_dataset/test'
+    parser = argparse.ArgumentParser(description="Train the baseline model")
+
+    parser.add_argument('--test_path', type=str, default='../dataset/MLSP_bit_dataset/test', help='the path to the test dataset')
+    parser.add_argument('--model', type=str, default='checkpoint_epoch_10.pth', help='the path to the model for inference')
+
+    args = parser.parse_args()
+
+    model = args.model
+    testDB = args.test_path
     run(model, testDB)
