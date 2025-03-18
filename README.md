@@ -1,4 +1,4 @@
- # BodyInTransit Data Competition at MLSP@2025 - Baseline Implementation
+ # BodyInTransit Data Competition at MLSP@2025 - Baseline Pytorch Implementation
  
  **Repository for the BiT Data Challenge**  
  **Competition Website**: [https:bodyintransit.eu/bit-data-competition/](https:bodyintransit.eu/bit-data-competition/)
