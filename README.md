@@ -45,7 +45,7 @@
  ---
  
  ## Dataset
- - **Original Labels**: Likert scale scores (1-7) as described in the [BIT Data Acquisition Paper](https:dl.acm.org/doi/10.1145/3613904.3642651)
+ - **Original Labels**: Likert scale scores (1-7) as described in the [BIT Data Acquisition Paper/](https:dl.acm.org/doi/10.1145/3613904.3642651)
  - **Competition Labels**: Transformed to {-1, 0, +1} where:
    - **-1**: Perceived lighter than with control audio
    - **0**: No perceived difference with respect to control audio
