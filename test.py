@@ -11,6 +11,7 @@ def run(modelPath, testDB):
 
     # features
     featidx = list(range(0,306)) # use all features  
+    featidx = list(range(0,312)) # use all features  
 
     # load the model
     model = Simple1DCNN(num_sensors=len(featidx), num_classes=3).to(device)

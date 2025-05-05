@@ -99,11 +99,13 @@ class Condition():
 
         return intervals
 
+
     def _readCSV(self, path, labels=False):
 
         df = pd.read_csv(path, header=None, low_memory=False)
         df = df.iloc[1:, 1:]
 
+        df['MaxGaitAcc'] = df[''].rolling(20).max()
         # this will only affect the test label files
         if labels:
             df.replace({'x': 10}, inplace=True)
