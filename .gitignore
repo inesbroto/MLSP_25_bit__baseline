@@ -1,0 +1,42 @@
+# Ignore wandb logs and configs
+wandb/
+*.wandb
+
+# Build files
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Data files
+data/
+datasets/
+*.csv
+*.h5
+*.npz
+*.npy
+*.pkl
+*.mat
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and outputs
+*.log
+*.out
+*.tmp
+
+# OS and IDE specific
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment files
+.env
+.venv/
+env/
+venv/
