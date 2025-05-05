@@ -1,0 +1,6 @@
+[34m[1mwandb[0m: [33mWARNING[0m Calling wandb.login() after wandb.init() has no effect.
+Loading subject (62/62)
+Loading subject (16/16)
+Epoch 1/10: 100%|██| 1395/1395 [00:36<00:00, 38.61it/s, loss=0.1244, acc=0.5323]
+Epoch [1/10], Train Loss: 0.9952, Train Acc: 0.5323, Val Loss: 0.9975, Val Acc: 0.5660, Val F1: 0.2409
+Epoch 2/10:  23%|▋  | 323/1395 [00:10<00:38, 27.56it/s, loss=0.1207, acc=0.5382]

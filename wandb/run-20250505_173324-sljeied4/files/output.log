@@ -1,0 +1,51 @@
+[34m[1mwandb[0m: [33mWARNING[0m Calling wandb.login() after wandb.init() has no effect.
+Loading subject (1/62)Backend TkAgg is interactive backend. Turning interactive mode on.
+Traceback (most recent call last):
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 2606, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 2630, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/__main__.py", line 71, in <module>
+    cli.main()
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 501, in main
+    run()
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 351, in run_file
+    runpy.run_path(target, run_name="__main__")
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+    return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+    _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+  File "/home/ibroto/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+    exec(code, run_globals)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/train.py", line 193, in <module>
+    train(args)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/train.py", line 32, in train
+    train_dataset = SubjectDataset(args.db_folder, excludeIds, mode='train',
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 292, in __init__
+    self.loadSubjects()
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 349, in loadSubjects
+    Subject(id_, self.folderPath, self.featuresIdx, self.winLength)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 199, in __init__
+    self.controlCondition = Condition(id, folderPath, 'Control', featuresIdx, winLength)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 58, in __init__
+    self._setWalks()
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 64, in _setWalks
+    int1 = self._findIntervals(self.labels1)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 94, in _findIntervals
+    if tensor[i] != 0:  # Found a new nonzero value
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/site-packages/pandas/core/frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 0

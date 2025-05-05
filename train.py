@@ -9,15 +9,21 @@ import argparse
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 
+import wandb
 
 def train(args):
+
+    wandb.init(project="BodyInMovement", config=vars(args))
+    wandb.login()
+    config=wandb.config
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     featidx = list(range(0,306)) # use all features  
-    #featidx = [i-2 for i in [2, 20, 38]] # use a subset of features
-      
+    #featidx = [i-2 for i in range(2,20)]#[2, 20, 38]] # use a subset of features
+    featidx = list(range(0,312)) # use all features  
+
 
     # Datasets
     excludeIds = ['p021', 'p028', 'p051', 'p288'] 
@@ -92,6 +98,12 @@ def train(args):
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
 
+        wandb.log({
+            "epoch":epoch+1,
+            "train_loss":train_loss,
+            "train_accuracy":train_accuracy
+        })
+
         # Validation
         model.eval()
         val_loss, val_correct, val_total = 0, 0, 0
@@ -121,6 +133,13 @@ def train(args):
         val_losses.append(val_loss)
         val_accuracies.append(val_accuracy)
         val_f1_scores.append(val_f1)
+
+        wandb.log({
+            "val_loss":val_loss,
+            "val_accuracy":val_accuracy,
+            "val_f1_score":val_f1
+
+        })
 
         print(f"Epoch [{epoch+1}/{args.epochs}], "
               f"Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.4f}, "
@@ -156,12 +175,13 @@ def train(args):
 
     plt.tight_layout()
     plt.savefig('training_plot.png')
+    wandb.log({"training_plot": wandb.Image("training_plot.png")})
     plt.show()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the baseline model")
 
-    parser.add_argument('--db_folder', type=str, default='../dataset/MLSP_bit_dataset/train', help='the path to the dataset')
+    parser.add_argument('--db_folder', type=str, default='/home/ibroto/Documents/SMC/SPIS/BodyInTransit/DATASET/train', help='the path to the dataset')
     parser.add_argument('--window_length', type=int, default=125, help='the size of the windows to extract as inputs for the models')
     parser.add_argument('--batch_size', type=int, default=8, help='Batch size for training')
     parser.add_argument('--learning_rate', type=float, default=5e-4, help='Learning rate')

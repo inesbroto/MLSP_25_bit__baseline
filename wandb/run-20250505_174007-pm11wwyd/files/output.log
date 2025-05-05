@@ -1,0 +1,3 @@
+[34m[1mwandb[0m: [33mWARNING[0m Calling wandb.login() after wandb.init() has no effect.
+Loading subject (1/62)Backend TkAgg is interactive backend. Turning interactive mode on.
+Loading subject (3/62)

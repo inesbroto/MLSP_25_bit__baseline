@@ -1,0 +1,24 @@
+[34m[1mwandb[0m: [33mWARNING[0m Calling wandb.login() after wandb.init() has no effect.
+Loading subject (5/62)
+Traceback (most recent call last):
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/train.py", line 192, in <module>
+    train(args)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/train.py", line 31, in train
+    train_dataset = SubjectDataset(args.db_folder, excludeIds, mode='train',
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 280, in __init__
+    self.loadSubjects()
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 337, in loadSubjects
+    Subject(id_, self.folderPath, self.featuresIdx, self.winLength)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 187, in __init__
+    self.controlCondition = Condition(id, folderPath, 'Control', featuresIdx, winLength)
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 57, in __init__
+    self._loadCSVs()
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 120, in _loadCSVs
+    self.rokoko2Data = self._readCSV(paths['rokoko2Path'])
+  File "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/dataset.py", line 112, in _readCSV
+    data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/site-packages/pandas/core/frame.py", line 1993, in to_numpy
+    result = self._mgr.as_array(dtype=dtype, copy=copy, na_value=na_value)
+  File "/home/ibroto/anaconda3/envs/SPISminiproj/lib/python3.9/site-packages/pandas/core/internals/managers.py", line 1686, in as_array
+    arr = np.asarray(blk.values, dtype=dtype)
+KeyboardInterrupt

@@ -1,0 +1,15 @@
+{"time":"2025-05-05T17:33:24.433507542+02:00","level":"INFO","msg":"stream: starting","core version":"0.19.10","symlink path":"/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/wandb/run-20250505_173324-sljeied4/logs/debug-core.log"}
+{"time":"2025-05-05T17:33:24.789205505+02:00","level":"INFO","msg":"created new stream","id":"sljeied4"}
+{"time":"2025-05-05T17:33:24.789294214+02:00","level":"INFO","msg":"stream: started","id":"sljeied4"}
+{"time":"2025-05-05T17:33:24.789349019+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:33:24.789389396+02:00","level":"INFO","msg":"handler: started","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:33:24.789425084+02:00","level":"INFO","msg":"sender: started","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:33:25.074414983+02:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-05-05T17:35:11.549583333+02:00","level":"INFO","msg":"stream: closing","id":"sljeied4"}
+{"time":"2025-05-05T17:35:11.549634641+02:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-05-05T17:35:11.549720674+02:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-05-05T17:35:12.532550127+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-05-05T17:35:12.924285628+02:00","level":"INFO","msg":"handler: closed","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:35:12.924373676+02:00","level":"INFO","msg":"sender: closed","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:35:12.924356022+02:00","level":"INFO","msg":"writer: Close: closed","stream_id":"sljeied4"}
+{"time":"2025-05-05T17:35:12.924516527+02:00","level":"INFO","msg":"stream: closed","id":"sljeied4"}

@@ -109,8 +109,10 @@ class Condition():
             df.replace({'x': 10}, inplace=True)
             df.fillna(0, inplace=True)
 
-        data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
-        return data
+        #data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
+        #return data
+        return df
+
     
     def _loadCSVs(self):
 
@@ -118,11 +120,23 @@ class Condition():
 
         self.rokoko1Data = self._readCSV(paths['rokoko1Path'])
         self.rokoko2Data = self._readCSV(paths['rokoko2Path'])
+
         self.labels1 = self._readCSV(paths['labels1Path'], labels=True)
         self.labels2 = self._readCSV(paths['labels2Path'], labels=True)
 
-        rb1Data = self.rokoko1Data
-        rb2Data = self.rokoko2Data
+        self.labels1=torch.tensor(self.labels1.to_numpy(dtype=float), dtype=torch.float32)
+        self.labels2=torch.tensor(self.labels2.to_numpy(dtype=float), dtype=torch.float32)
+
+        self.bitalino1Data = self._readCSV(paths['bitalino1Path'])
+        self.bitalino2Data = self._readCSV(paths['bitalino2Path'])
+
+        rb1Data = pd.concat([self.rokoko1Data, self.bitalino1Data], axis=1)
+        rb2Data = pd.concat([self.rokoko2Data, self.bitalino2Data], axis=1)
+        rb1Data = torch.tensor(rb1Data.to_numpy(dtype=float), dtype=torch.float32)
+        rb2Data = torch.tensor(rb2Data.to_numpy(dtype=float), dtype=torch.float32)
+
+        #rb1Data = self.rokoko1Data
+        #rb2Data = self.rokoko2Data
 
         self.rb1Data = rb1Data[:, self.featuresIdx]
         self.rb2Data = rb2Data[:, self.featuresIdx]

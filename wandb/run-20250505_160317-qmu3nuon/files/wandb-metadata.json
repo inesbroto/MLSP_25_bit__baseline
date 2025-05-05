@@ -1,0 +1,35 @@
+{
+  "os": "Linux-6.8.0-58-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.9.18",
+  "startedAt": "2025-05-05T14:03:17.222968Z",
+  "args": [
+    "--db_folder",
+    "/home/ibroto/Documents/SMC/SPIS/BodyInTransit/DATASET/train"
+  ],
+  "program": "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/train.py",
+  "codePath": "train.py",
+  "git": {
+    "remote": "https://github.com/tmcortes/MLSP_25_bit__baseline.git",
+    "commit": "cdafc2e8aa183a4bb0bbedf5a44e96f3b1948c80"
+  },
+  "email": "inesbc3000@gmail.com",
+  "root": "/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline",
+  "host": "ibroto-Modern-15-A5M",
+  "executable": "/home/ibroto/anaconda3/envs/SPISminiproj/bin/python3",
+  "codePathLocal": "train.py",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "disk": {
+    "/": {
+      "total": "502392610816",
+      "used": "329580625920"
+    }
+  },
+  "memory": {
+    "total": "16092221440"
+  },
+  "cpu": {
+    "count": 8,
+    "countLogical": 16
+  }
+}
