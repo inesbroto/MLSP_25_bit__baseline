@@ -26,7 +26,8 @@ def train(args):
 
 
     # Datasets
-    excludeIds = ['p021', 'p028', 'p051', 'p288'] 
+    excludeIds = ['p021', 'p028', 'p051', 'p288',
+                  'p160', 'p170', 'p138', 'p036','p122', 'p176', 'p052', 'p137','p048', 'p071', 'p165'] #missing Accel data
     splits = {'train': 80, 'val': 20, 'test': 0}
     seed = 42
     train_dataset = SubjectDataset(args.db_folder, excludeIds, mode='train', 
