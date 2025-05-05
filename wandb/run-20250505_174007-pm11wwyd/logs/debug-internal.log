@@ -1,7 +1,0 @@
-{"time":"2025-05-05T17:40:07.747405285+02:00","level":"INFO","msg":"stream: starting","core version":"0.19.10","symlink path":"/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/wandb/run-20250505_174007-pm11wwyd/logs/debug-core.log"}
-{"time":"2025-05-05T17:40:08.106234234+02:00","level":"INFO","msg":"created new stream","id":"pm11wwyd"}
-{"time":"2025-05-05T17:40:08.106326939+02:00","level":"INFO","msg":"stream: started","id":"pm11wwyd"}
-{"time":"2025-05-05T17:40:08.106381973+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"pm11wwyd"}
-{"time":"2025-05-05T17:40:08.106466673+02:00","level":"INFO","msg":"handler: started","stream_id":"pm11wwyd"}
-{"time":"2025-05-05T17:40:08.106534412+02:00","level":"INFO","msg":"sender: started","stream_id":"pm11wwyd"}
-{"time":"2025-05-05T17:40:08.439278874+02:00","level":"INFO","msg":"Starting system monitor"}

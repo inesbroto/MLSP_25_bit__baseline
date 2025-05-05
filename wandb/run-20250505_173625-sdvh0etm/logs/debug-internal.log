@@ -1,7 +1,0 @@
-{"time":"2025-05-05T17:36:25.900072706+02:00","level":"INFO","msg":"stream: starting","core version":"0.19.10","symlink path":"/home/ibroto/Documents/GitHub/MLSP_25_bit__baseline/wandb/run-20250505_173625-sdvh0etm/logs/debug-core.log"}
-{"time":"2025-05-05T17:36:26.257008378+02:00","level":"INFO","msg":"created new stream","id":"sdvh0etm"}
-{"time":"2025-05-05T17:36:26.257061429+02:00","level":"INFO","msg":"stream: started","id":"sdvh0etm"}
-{"time":"2025-05-05T17:36:26.257169374+02:00","level":"INFO","msg":"sender: started","stream_id":"sdvh0etm"}
-{"time":"2025-05-05T17:36:26.257200322+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"sdvh0etm"}
-{"time":"2025-05-05T17:36:26.257236191+02:00","level":"INFO","msg":"handler: started","stream_id":"sdvh0etm"}
-{"time":"2025-05-05T17:36:26.520232955+02:00","level":"INFO","msg":"Starting system monitor"}
