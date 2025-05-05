@@ -22,11 +22,12 @@ def train(args):
 
     featidx = list(range(0,306)) # use all features  
     #featidx = [i-2 for i in range(2,20)]#[2, 20, 38]] # use a subset of features
+    #featidx = [i-2 for i in [29,32,35,83,86,89]] # hip flexor columns
     featidx = list(range(0,312)) # use all features  
 
 
     # Datasets
-    excludeIds = ['p021', 'p028', 'p051', 'p288',
+    excludeIds = ['p021', 'p028', 'p051', 'p288', 'p181',
                   'p160', 'p170', 'p138', 'p036','p122', 'p176', 'p052', 'p137','p048', 'p071', 'p165'] #missing Accel data
     splits = {'train': 80, 'val': 20, 'test': 0}
     seed = 42
