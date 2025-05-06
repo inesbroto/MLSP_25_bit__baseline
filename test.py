@@ -10,7 +10,9 @@ def run(modelPath, testDB):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # features
-    featidx = list(range(0,306)) # use all features  
+    # featidx = list(range(0,312)) # use all features  
+    featidx = [i-2 for i in [29,30,31,32,33,34,35,36,37,83,84,85,86,87,88,89,90,91]] # all hip data
+    # p084, p090, p039 these participants have NaN accelerometer data
 
     # load the model
     model = Simple1DCNN(num_sensors=len(featidx), num_classes=3).to(device)
