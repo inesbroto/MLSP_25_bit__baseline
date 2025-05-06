@@ -8,6 +8,9 @@ import statistics
 import torch
 from torch.utils.data import Dataset
 
+import neurokit2 as nk
+import numpy as np
+
 class Walk():
 
     def __init__(self, data, startRow, endRow, label, filePath):
@@ -35,7 +38,7 @@ class Walk():
 
 class Condition():
 
-    def __init__(self, SubjectId, folderPath, conditionName, featuresIdx, winLength):
+    def __init__(self, SubjectId, folderPath, conditionName, featuresIdx, winLength,maxYAccWinLength=125, ECGsdWinLength=125):
 
         self.id = SubjectId
         self.folderPath = folderPath
@@ -43,6 +46,8 @@ class Condition():
         self.featuresIdx = featuresIdx
         self.winLength = winLength
 
+        self.maxYAccWinLength = maxYAccWinLength
+        self.ECGsdWinLength = ECGsdWinLength
         # these attributes will be filled by the following functions
         self.rb1Data = None
         self.rb2Data = None
@@ -99,7 +104,44 @@ class Condition():
 
         return intervals
 
-    def _readCSV(self, path, labels=False):
+
+    def _readCSV_rokoko(self, path, labels=False):
+
+        df = pd.read_csv(path, header=None, low_memory=False)
+        df = df.iloc[1:, 1:]
+
+        #df['MaxGaitAcc'] = df[''].rolling(self.maxYAccWinLength).max()
+        # this will only affect the test label files
+        if labels:
+            df.replace({'x': 10}, inplace=True)
+            df.fillna(0, inplace=True)
+        
+        return df
+
+
+    def _readCSV_bitalino(self, path, labels=False,sampling_rate=1000):
+
+        df = pd.read_csv(path, header=None, low_memory=False)
+        df = df.iloc[1:, 1:]
+
+        df['MaxGaitYAcc'] = df[5].rolling(self.maxYAccWinLength,min_periods=1).max()
+        df['ECGstd'] = df[3].rolling(self.ECGsdWinLength,min_periods=1).std()
+
+        # Step 1: Process ECG to find R-peaks
+        ecg_processed = nk.ecg_process(pd.to_numeric(df[2]), sampling_rate=sampling_rate)
+        rpeaks = ecg_processed[1]["ECG_R_Peaks"]
+        # Step 2: Compute RR intervals (in seconds)
+        rr_intervals = np.diff(rpeaks) / sampling_rate  # or multiply by 1000 for ms
+        # Step 3: Compute RMSSD
+        df['ECGrmssd'] = np.sqrt(np.mean(np.square(np.diff(rr_intervals))))
+
+        # this will only affect the test label files
+        if labels:
+            df.replace({'x': 10}, inplace=True)
+            df.fillna(0, inplace=True)
+        return df
+    
+    def _readCSV_labels(self, path, labels=False):
 
         df = pd.read_csv(path, header=None, low_memory=False)
         df = df.iloc[1:, 1:]
@@ -109,26 +151,21 @@ class Condition():
             df.replace({'x': 10}, inplace=True)
             df.fillna(0, inplace=True)
 
-        #data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
-        #return data
-        return df
-
+        data = torch.tensor(df.to_numpy(dtype=float), dtype=torch.float32)
+        return data
     
     def _loadCSVs(self):
 
         paths = self._createCSVPaths()
 
-        rokoko1Data = self._readCSV(paths['rokoko1Path'])
-        rokoko2Data = self._readCSV(paths['rokoko2Path'])
+        rokoko1Data = self._readCSV_rokoko(paths['rokoko1Path'])
+        rokoko2Data = self._readCSV_rokoko(paths['rokoko2Path'])
 
-        self.labels1 = self._readCSV(paths['labels1Path'], labels=True)
-        self.labels2 = self._readCSV(paths['labels2Path'], labels=True)
+        self.labels1 = self._readCSV_labels(paths['labels1Path'], labels=True) #already returns a torch.tensor object
+        self.labels2 = self._readCSV_labels(paths['labels2Path'], labels=True)
 
-        self.labels1=torch.tensor(self.labels1.to_numpy(dtype=float), dtype=torch.float32)
-        self.labels2=torch.tensor(self.labels2.to_numpy(dtype=float), dtype=torch.float32)
-
-        bitalino1Data = self._readCSV(paths['bitalino1Path'])
-        bitalino2Data = self._readCSV(paths['bitalino2Path'])
+        bitalino1Data = self._readCSV_bitalino(paths['bitalino1Path'])
+        bitalino2Data = self._readCSV_bitalino(paths['bitalino2Path'])
 
         rb1Data = pd.concat([rokoko1Data, bitalino1Data], axis=1)
         rb2Data = pd.concat([rokoko2Data, bitalino2Data], axis=1)
