@@ -119,7 +119,7 @@ class Condition():
         return df
 
 
-    def _readCSV_bitalino(self, path, labels=False,sampling_rate=1000):
+    def _readCSV_bitalino(self, path, labels=False,sampling_rate=100):
 
         df = pd.read_csv(path, header=None, low_memory=False)
         df = df.iloc[1:, 1:]
@@ -128,13 +128,14 @@ class Condition():
         df['ECGstd'] = df[3].rolling(self.ECGsdWinLength,min_periods=1).std()
 
         # Step 1: Process ECG to find R-peaks
+        df[2].ffill()
+        df[2].bfill()
         ecg_processed = nk.ecg_process(pd.to_numeric(df[2]), sampling_rate=sampling_rate)
         rpeaks = ecg_processed[1]["ECG_R_Peaks"]
         # Step 2: Compute RR intervals (in seconds)
         rr_intervals = np.diff(rpeaks) / sampling_rate  # or multiply by 1000 for ms
         # Step 3: Compute RMSSD
         df['ECGrmssd'] = np.sqrt(np.mean(np.square(np.diff(rr_intervals))))
-
         # this will only affect the test label files
         if labels:
             df.replace({'x': 10}, inplace=True)

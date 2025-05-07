@@ -24,7 +24,7 @@ def train(args):
     #featidx = [i-2 for i in range(2,20)]#[2, 20, 38]] # use a subset of features
     featidx = [i-2 for i in [29,32,35,83,86,89,313,314,315]] # hip flexor columns
     #featidx = list(range(0,312)) # use all features  
-    featidx = [i-2 for i in [29,32,35,83,86,89,307, 308, 309,313,314]] # hip flexor columns
+    featidx = [i-2 for i in [29,32,35,83,86,89,307, 308, 309,313,314, 315]] # hip flexor columns
 
 
 
