@@ -20,11 +20,20 @@ def train(args):
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    featidx = list(range(0,306)) # use all features  
+    #featidx = list(range(0,306)) # use all features  
     #featidx = [i-2 for i in range(2,20)]#[2, 20, 38]] # use a subset of features
-    featidx = [i-2 for i in [29,32,35,83,86,89,313,314,315]] # hip flexor columns
+    #featidx = [i-2 for i in [29,32,35,83,86,89,313,314,315]] # hip flexor columns
     #featidx = list(range(0,312)) # use all features  
     featidx = [i-2 for i in [29,32,35,83,86,89,307, 308, 309,313,314, 315]] # hip flexor columns
+        #featidx = list(range(0,306)) # use all features  
+    #featidx = [i-2 for i in range(2,20)]#[2, 20, 38]] # use a subset of features
+    # featidx = [i-2 for i in [29,30,31,32,33,34,35,36,37,83,84,85,86,87,88,89,90,91]] # all hip data
+    # featidx = [i-2 for i in [218,219,220,221,222,223,224,225,226]] # all head data
+    # featidx = [i-2 for i in [227,228,229,230,231,232,233,234,235]] # all neck data
+    # featidx = [i-2 for i in [56,57,58,59,60,61,62,63,64,110,111,112,113,114,115,116,117,118]] # all feet data
+    # featidx = [i-2 for i in [29,30,31,32,33,34,35,36,37,56,57,58,59,60,61,62,63,64,83,84,85,86,87,88,89,90,91,110,111,112,113,114,115,116,117,118,
+    #                         218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235]] # hip, head, neck, feet data
+    #featidx = list(range(0,312)) # use all features  
 
 
 
